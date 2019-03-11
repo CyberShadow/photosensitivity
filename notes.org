@@ -1,0 +1,51 @@
+* Algorithm
+
+- General goals:
+  - Performance (usable to watch videos directly, without offline preprocessing)
+  - No buffering (usable to watch streams without additional delay)
+  - Usable generally (can be left on all the time, i.e. should not affect "good" input at all)
+  - Should still allow keeping track of what's happening in the video at least to some degree even in "bad" fragments
+    - Not enough to drop frames or duplicate last "good" frames
+- General idea:
+  - Define a function badness(frames), which will be called as a sliding window function over the frames
+    - Goals:
+      - Detect smooth but quick and repeated changes in brightness
+        - Not enough to look at just the last frame
+      - Detect red/green flashes
+        - Not enough to average total luminosity ; look at each channel separately
+      - Detect constant-frequency flashes
+        - Not enough to look at just one frame X frames in the past
+      - Detect objects rapidly flashing from one part of the frame to another
+        - Not enough to look at any per-frame averages
+      - Detect series of flashes (multiple flashes raise score)
+        - Not enough to look at minimum/maximum values in frame history
+      - Immune to single pixels changing their values (e.g. slow scrolling of hatch/dither textures)
+        - Not enough to look at difference of individual pixels ; still need to aggregate them to some degree
+      - Perform quickly enough to be usable in real time
+    - Algorithm:
+      - Split image into grid
+      - Calculate average luminosity (per channel!) for each grid cell
+      - Keep a running sum of the delta (absolute value of difference) between successive frames' corresponding grid cells
+  - Do not allow badness(last frames) to exceed a certain threshold
+    - If current frame pushes badness over the threshold, activate countermeasures and modify current frame (to keep resulting badness under threshold)
+  
+- For each frame:
+  - Push to history
+  - Update current badness
+  - If badness exceeds threshold:
+    - Edit frame
+    - Update history and badness!
+      - Unpush unedited frame
+      - Push edited frame
+
+* Frame memory management
+
+|----------+------+-----------------------+-----------------------+----------------------+-----------------------------+-------------------------+-----------------------+------------|
+| Editing? | Bad? |                       |                       |                      |                             |                         |                       |            |
+|----------+------+-----------------------+-----------------------+----------------------+-----------------------------+-------------------------+-----------------------+------------|
+| No       | No   | allocate output frame | free old "last" frame | save input to "last" |                             |                         | copy input to output  |            |
+| No       | Yes  | allocate output frame |                       |                      |                             |                         | copy "last" to output | free input |
+| Yes      | No   | allocate output frame | free old "last" frame | save input to "last" |                             |                         | copy input to output  |            |
+| Yes      | Yes  | allocate output frame |                       |                      | copy "last" if not writable | blend input over "last" | copy "last" to output | free input |
+|          |      |                       |                       |                      |                             |                         |                       |            |
+|----------+------+-----------------------+-----------------------+----------------------+-----------------------------+-------------------------+-----------------------+------------|
