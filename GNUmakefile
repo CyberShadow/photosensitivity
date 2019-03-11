@@ -126,7 +126,7 @@ video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
 	bash -s < $(path_tmp)/cmd.txt
 
 video-filter :
-	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/$(sample)-filtered.mp4
+	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/$(sample)-filtered$(suffix).mp4
 
 video-compare :
-	make video input=sample-$(sample) action=comparison output=encode out_fn=$(path_pub)/$(sample)-comparison.mp4
+	make video input=sample-$(sample) action=comparison output=encode out_fn=$(path_pub)/$(sample)-comparison$(suffix).mp4
