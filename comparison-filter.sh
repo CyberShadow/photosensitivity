@@ -11,8 +11,10 @@ split[A][B];
 [A][R]hstack[C];
 
 [I]drawgraph
-	=fg1=0x0000FF:m1=lavfi.photosensitivity.badness
-	:fg2=0x00FF00:m2=lavfi.photosensitivity.factor
+	=fg1=0x00FFFF:m1=lavfi.photosensitivity.fixed-badness
+	:fg2=0x0000FF:m2=lavfi.photosensitivity.badness
+	:fg3=0xFF00FF:m3=lavfi.photosensitivity.frame-badness
+	:fg4=0x00FF00:m4=lavfi.photosensitivity.factor
 	:min=0
 	:max=2
 	:slide=scroll
