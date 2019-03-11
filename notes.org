@@ -49,3 +49,9 @@
 | Yes      | Yes  | allocate output frame |                       |                      | copy "last" if not writable | blend input over "last" | copy "last" to output | free input |
 |          |      |                       |                       |                      |                             |                         |                       |            |
 |----------+------+-----------------------+-----------------------+----------------------+-----------------------------+-------------------------+-----------------------+------------|
+
+* TODO
+
+- [ ] Add pattern detection
+- [ ] Use assembler for blending (refactor vf_framerate.asm)
+- [ ] Change "skip" parameter to "max_samples"
