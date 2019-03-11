@@ -92,23 +92,23 @@ action := filter
 params := t=1
 
 video-action-filter :
-	printf -- '%q ' -vf "photosensitivity=$(params)" > tmp/cmd-action.txt
+	printf -- '%q ' -vf "photosensitivity=$(params)" > $(path_tmp)/cmd-action.txt
 
 video-action-comparison :
-	printf -- '%q ' -filter_complex "$$(params="$(params)" ./comparison-filter.sh)" > tmp/cmd-action.txt
+	printf -- '%q ' -filter_complex "$$(params="$(params)" ./comparison-filter.sh)" > $(path_tmp)/cmd-action.txt
 
 video-output-mpv :
-	printf -- '%q ' mpv - > tmp/cmd-output.txt
+	printf -- '%q ' mpv - > $(path_tmp)/cmd-output.txt
 
 video-output-encode :
-	printf -- '%q ' ffmpeg -y -i - -pix_fmt yuv420p '-c:v' libx264 -crf 15 out.mp4 > tmp/cmd-output.txt
+	printf -- '%q ' ffmpeg -y -i - -pix_fmt yuv420p '-c:v' libx264 -crf 15 out.mp4 > $(path_tmp)/cmd-output.txt
 
-tmp/cmd.txt : video-action-$(action) video-output-$(output)
+$(path_tmp)/cmd.txt : video-action-$(action) video-output-$(output)
 	printf -- '%q ' "$(path_ffmpeg_build_native_exe)" -y -loglevel verbose > $@
-	cat tmp/cmd-action.txt >> $@
+	cat $(path_tmp)/cmd-action.txt >> $@
 	printf -- '%q ' -i $(fn) $(ffmpeg_args) '-c:v' rawvideo -c:a copy -f nut  -  >> $@
 	printf ' | ' >> $@
-	cat tmp/cmd-output.txt >> $@
+	cat $(path_tmp)/cmd-output.txt >> $@
 
-video : $(path_ffmpeg_build_native_exe) tmp/cmd.txt
-	bash -s < tmp/cmd.txt
+video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
+	bash -s < $(path_tmp)/cmd.txt
