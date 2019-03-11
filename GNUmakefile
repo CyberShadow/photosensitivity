@@ -5,11 +5,18 @@ path_tmp = $(PWD)/tmp
 
 path_ffmpeg_src = $(HOME)/work/extern/ffmpeg
 path_ffmpeg_src_files = $(path_ffmpeg_src)/libavfilter/vf_photosensitivity.c
+
 path_ffmpeg_build_native = $(path_tmp)/build/ffmpeg/native
+path_ffmpeg_build_native_config = $(path_ffmpeg_build_native)/Makefile
 path_ffmpeg_build_native_exe = $(path_ffmpeg_build_native)/ffmpeg
 
-$(path_ffmpeg_build_native_exe) : $(path_ffmpeg_src_files)
+$(path_ffmpeg_build_native_config) :
+	mkdir -p $(path_ffmpeg_build_native)
+	cd $(path_ffmpeg_build_native) && $(path_ffmpeg_src)/configure
+
+$(path_ffmpeg_build_native_exe) : $(path_ffmpeg_build_native_config) $(path_ffmpeg_src_files)
 	cd $(path_ffmpeg_build_native) && ccache-run make -j12
+
 ffmpeg : $(path_ffmpeg_build_native_exe)
 
 ### FFmpeg (win64)
