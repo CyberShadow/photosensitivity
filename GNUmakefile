@@ -98,6 +98,9 @@ video-input-fn :
 video-input-sample-% :
 	cat samples/$*.txt > $(path_tmp)/cmd-input.txt
 
+video-action-filter :
+	printf -- '%q ' -vf "photosensitivity=$(params)" > $(path_tmp)/cmd-action.txt
+
 video-action-comparison :
 	printf -- '%q ' -filter_complex "$$(params="$(params)" ./comparison-filter.sh)" > $(path_tmp)/cmd-action.txt
 
@@ -119,3 +122,8 @@ $(path_tmp)/cmd.txt : video-input-$(input) video-action-$(action) video-output-$
 video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
 	bash -s < $(path_tmp)/cmd.txt
 
+video-filter :
+	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/$(sample)-filtered.mp4
+
+video-compare :
+	make video input=sample-$(sample) action=comparison output=encode out_fn=$(path_pub)/$(sample)-comparison.mp4
