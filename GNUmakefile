@@ -27,7 +27,7 @@ path_ffmpeg_build_win64_exe = $(path_ffmpeg_build_win64)/ffmpeg
 
 $(path_ffmpeg_build_win64_config) :
 	mkdir -p $(path_ffmpeg_build_win64)
-	cd $(path_ffmpeg_build_win64) && $(path_ffmpeg_src)/configure --arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32- --enable-shared --enable-static
+	cd $(path_ffmpeg_build_win64) && $(path_ffmpeg_src)/configure --arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32- --disable-shared --enable-static
 
 $(path_ffmpeg_build_win64_exe) : $(path_ffmpeg_build_win64_config) $(path_ffmpeg_src_files)
 	ccache-run make -C $(path_ffmpeg_build_win64) -j12
@@ -37,7 +37,7 @@ $(path_pub_ffmpeg) : $(path_ffmpeg_build_win64_exe)
 	rm -rf $(path_tmp)/out
 	mkdir $(path_tmp)/out
 	cp `ls $(path_ffmpeg_build_win64)/*.exe $(path_ffmpeg_build_win64)/*/*-*.dll | grep -v _g.exe` $(path_tmp)/out/
-	cp /usr/x86_64-w64-mingw32/bin/{SDL2.dll,libwinpthread-1.dll,zlib1.dll} $(path_tmp)/out/
+	cp /usr/x86_64-w64-mingw32/bin/{SDL2,libwinpthread-1,zlib1,libbz2-1,libiconv-2,liblzma-5}.dll $(path_tmp)/out/
 	rm -f $@
 	cd $(path_tmp)/out/ && 7z a $@ *
 ffmpeg-win64 : $(path_pub_ffmpeg)
@@ -89,10 +89,14 @@ mpv : $(path_pub_mpv)
 ### Video stuff
 
 action := filter
-params := t=1
+out_fn := out.mp4
+input := fn
 
-video-action-filter :
-	printf -- '%q ' -vf "photosensitivity=$(params)" > $(path_tmp)/cmd-action.txt
+video-input-fn :
+	printf -- '%q ' -i $(fn) > $(path_tmp)/cmd-input.txt
+
+video-input-sample-% :
+	cat samples/$*.txt > $(path_tmp)/cmd-input.txt
 
 video-action-comparison :
 	printf -- '%q ' -filter_complex "$$(params="$(params)" ./comparison-filter.sh)" > $(path_tmp)/cmd-action.txt
@@ -101,14 +105,17 @@ video-output-mpv :
 	printf -- '%q ' mpv - > $(path_tmp)/cmd-output.txt
 
 video-output-encode :
-	printf -- '%q ' ffmpeg -y -i - -pix_fmt yuv420p '-c:v' libx264 -crf 15 out.mp4 > $(path_tmp)/cmd-output.txt
+	printf -- '%q ' ffmpeg -y -i - -pix_fmt yuv420p '-c:v' libx264 -crf 15 "$(out_fn)" > $(path_tmp)/cmd-output.txt
 
-$(path_tmp)/cmd.txt : video-action-$(action) video-output-$(output)
+$(path_tmp)/cmd.txt : video-input-$(input) video-action-$(action) video-output-$(output)
 	printf -- '%q ' "$(path_ffmpeg_build_native_exe)" -y -loglevel verbose > $@
+	cat $(path_tmp)/cmd-input.txt >> $@
+	printf -- '%q ' $(ffmpeg_args) >> $@
 	cat $(path_tmp)/cmd-action.txt >> $@
-	printf -- '%q ' -i $(fn) $(ffmpeg_args) '-c:v' rawvideo -c:a copy -f nut  -  >> $@
+	printf -- '%q ' '-c:v' rawvideo -c:a copy -f nut  -  >> $@
 	printf ' | ' >> $@
 	cat $(path_tmp)/cmd-output.txt >> $@
 
 video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
 	bash -s < $(path_tmp)/cmd.txt
+
