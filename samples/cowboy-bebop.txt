@@ -1,0 +1,1 @@
+-i ~/data/video/Anime/'Cowboy Bebop [Remastered]/Cowboy_Bebop_TV_Remastered_01_[ru_jp].mkv' -to 315 -map 0:2 -map 0:3

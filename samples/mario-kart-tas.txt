@@ -1,0 +1,1 @@
+-i ~/data/video/Downloaded/photosensitivity/"[TAS] Mario Kart 64 - Special Cup - 1P, GP, 150cc in 2'25'41, twitch.tv_weatherton-jhIUFZR9vq0.mkv" -ss 25 -to 62
