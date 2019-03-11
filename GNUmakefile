@@ -102,7 +102,10 @@ video-action-filter :
 	printf -- '%q ' -vf "photosensitivity=$(params)" > $(path_tmp)/cmd-action.txt
 
 video-action-comparison :
-	printf -- '%q ' -filter_complex "$$(params="$(params)" ./comparison-filter.sh)" > $(path_tmp)/cmd-action.txt
+	printf -- '%q ' -filter_complex "$$(params="$(params)" ./filter-comparison.sh)" > $(path_tmp)/cmd-action.txt
+
+video-action-graph :
+	printf -- '%q ' -filter_complex "$$(params="$(params)" ./filter-with-graph.sh)" > $(path_tmp)/cmd-action.txt
 
 video-output-mpv :
 	printf -- '%q ' mpv - > $(path_tmp)/cmd-output.txt
