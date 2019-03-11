@@ -23,7 +23,7 @@ ffmpeg : $(path_ffmpeg_build_native_exe)
 
 path_ffmpeg_build_win64 = $(path_tmp)/build/ffmpeg/win64
 path_ffmpeg_build_win64_config = $(path_ffmpeg_build_win64)/Makefile
-path_ffmpeg_build_win64_exe = $(path_ffmpeg_build_win64)/ffmpeg
+path_ffmpeg_build_win64_exe = $(path_ffmpeg_build_win64)/ffmpeg.exe
 
 $(path_ffmpeg_build_win64_config) :
 	mkdir -p $(path_ffmpeg_build_win64)
