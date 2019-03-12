@@ -98,14 +98,11 @@ video-input-fn :
 video-input-sample-% :
 	cat samples/$*.txt > $(path_tmp)/cmd-input.txt
 
-video-action-filter :
+video-action-render :
 	printf -- '%q ' -vf "photosensitivity=$(params)" > $(path_tmp)/cmd-action.txt
 
-video-action-comparison :
-	printf -- '%q ' -filter_complex "$$(params="$(params)" ./filter-comparison.sh)" > $(path_tmp)/cmd-action.txt
-
-video-action-graph :
-	printf -- '%q ' -filter_complex "$$(params="$(params)" ./filter-with-graph.sh)" > $(path_tmp)/cmd-action.txt
+video-action-filter :
+	printf -- '%q ' -filter_complex "$$(params="$(params)" ./filter-$(filter).sh)" > $(path_tmp)/cmd-action.txt
 
 video-output-mpv :
 	printf -- '%q ' mpv - > $(path_tmp)/cmd-output.txt
@@ -125,8 +122,8 @@ $(path_tmp)/cmd.txt : video-input-$(input) video-action-$(action) video-output-$
 video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
 	bash -s < $(path_tmp)/cmd.txt
 
-video-filter :
-	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/$(sample)-filtered$(suffix).mp4
+video-render :
+	make video input=sample-$(sample) action=render output=encode out_fn=$(path_pub)/$(sample)-filtered$(suffix).mp4
 
-video-compare :
-	make video input=sample-$(sample) action=comparison output=encode out_fn=$(path_pub)/$(sample)-comparison$(suffix).mp4
+video-filter-% :
+	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/$(sample)-$*$(suffix).mp4 filter=$*
