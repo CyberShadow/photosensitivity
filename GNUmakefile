@@ -32,7 +32,7 @@ $(path_ffmpeg_build_win64_config) :
 $(path_ffmpeg_build_win64_exe) : $(path_ffmpeg_build_win64_config) $(path_ffmpeg_src_files)
 	ccache-run make -C $(path_ffmpeg_build_win64) -j12
 
-path_pub_ffmpeg = $(path_pub)/ffmpeg.7z
+path_pub_ffmpeg = $(path_pub)/bin/ffmpeg.7z
 $(path_pub_ffmpeg) : $(path_ffmpeg_build_win64_exe)
 	rm -rf $(path_tmp)/out
 	mkdir $(path_tmp)/out
@@ -80,10 +80,10 @@ $(path_mpv_build_win64_config) : $(path_mxe_ffmpeg_exe)
 $(path_mpv_build_win64_exe) : $(path_mpv_build_win64_config)
 	cd $(path_mpv) && export PATH=$(path_mxe)/usr/bin:$$PATH &&                                    python2 ./waf -o $(path_mpv_build_win64) build
 
-path_pub_mpv = $(path_pub)/mpv.7z
+path_pub_mpv = $(path_pub)/bin/mpv.7z
 $(path_pub_mpv) : $(path_mpv_build_win64_exe)
-	rm -f $(path_pub)/mpv.7z
-	7z a $(path_pub)/mpv.7z $(path_mpv_build_win64)/mpv.exe $(path_mpv_build_win64)/mpv.com
+	rm -f $(path_pub)/bin/mpv.7z
+	7z a $(path_pub)/bin/mpv.7z $(path_mpv_build_win64)/mpv.exe $(path_mpv_build_win64)/mpv.com
 mpv : $(path_pub_mpv)
 
 ### Video stuff
@@ -123,7 +123,7 @@ video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
 	bash -s < $(path_tmp)/cmd.txt
 
 video-render :
-	make video input=sample-$(sample) action=render output=encode out_fn=$(path_pub)/$(sample)-filtered$(suffix).mp4
+	make video input=sample-$(sample) action=render output=encode out_fn=$(path_pub)/vid/$(sample)-filtered$(suffix).mp4
 
 video-filter-% :
-	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/$(sample)-$*$(suffix).mp4 filter=$*
+	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/vid/$(sample)-$*$(suffix).mp4 filter=$*
