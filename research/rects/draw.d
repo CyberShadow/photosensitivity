@@ -42,6 +42,7 @@ void main()
 {
 	render(20, 50, 20, 50, false, false);
 	render(0, 50, 0, 50, false, false);
+	render(50, 50, 50, 50, false, false);
 
 	foreach (gray; [false, true])
 		foreach (swap; [false, true])
