@@ -54,4 +54,6 @@
 
 - [ ] Add pattern detection
 - [ ] Use assembler for blending (refactor vf_framerate.asm)
+- [ ] Use swscale?
+  - [ ] reproduce goom's result, then retry with flags=area
 - [ ] Change "skip" parameter to "max_samples"
