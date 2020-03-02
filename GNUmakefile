@@ -116,7 +116,7 @@ $(path_tmp)/cmd.txt : video-input-$(input) video-action-$(action) video-output-$
 	cat $(path_tmp)/cmd-input.txt >> $@
 	printf -- '%q ' $(ffmpeg_args) >> $@
 	cat $(path_tmp)/cmd-action.txt >> $@
-	printf -- '%q ' '-c:v' rawvideo -c:a copy -f nut  -  >> $@
+	printf -- '%q ' -max_muxing_queue_size 1024 '-c:v' rawvideo -c:a copy -f nut  -  >> $@
 	printf ' | ' >> $@
 	cat $(path_tmp)/cmd-output.txt >> $@
 
