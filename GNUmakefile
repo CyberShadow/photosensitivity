@@ -123,7 +123,7 @@ video : $(path_ffmpeg_build_native_exe) $(path_tmp)/cmd.txt
 	bash -s < $(path_tmp)/cmd.txt
 
 video-render :
-	make video input=sample-$(sample) action=render output=encode out_fn=$(path_pub)/vid/$(sample)-filtered$(suffix).mp4
+	make video input=sample-$(sample) action=render output=encode params=$(params) out_fn=$(path_pub)/vid/$(sample)-filtered$(suffix).mp4
 
 video-filter-% :
-	make video input=sample-$(sample) action=filter output=encode out_fn=$(path_pub)/vid/$(sample)-$*$(suffix).mp4 filter=$*
+	make video input=sample-$(sample) action=filter output=encode params=$(params) out_fn=$(path_pub)/vid/$(sample)-$*$(suffix).mp4 filter=$*
