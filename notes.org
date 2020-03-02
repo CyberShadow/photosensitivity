@@ -57,3 +57,10 @@
 - [ ] Use swscale?
   - [ ] reproduce goom's result, then retry with flags=area
 - [ ] Change "skip" parameter to "max_samples"
+
+* Research
+
+  - https://neurosciencenews.com/seizures-images-6609/
+    - https://www.cell.com/current-biology/fulltext/S0960-9822(17)30406-2
+      - https://www.cell.com/cms/10.1016/j.cub.2017.03.076/attachment/c03abdcb-155c-422c-b289-42db83e17219/mmc1
+      - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5438467/
