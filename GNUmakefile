@@ -128,3 +128,6 @@ video-render :
 
 video-filter-% :
 	make video input=sample-$(sample) action=filter output=encode params=$(params) out_fn=$(path_pub)/vid/$(sample)-$*$(suffix).mp4 filter=$*
+
+video-play :
+	make video input=sample-$(sample) action=render output=mpv
