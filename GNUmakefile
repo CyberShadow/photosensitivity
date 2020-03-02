@@ -1,5 +1,6 @@
 path_pub = $(PWD)/pub
 path_tmp = $(PWD)/tmp
+path_local = /mnt/local/tmp
 
 ### FFmpeg (native)
 
@@ -15,7 +16,7 @@ $(path_ffmpeg_build_native_config) :
 	cd $(path_ffmpeg_build_native) && $(path_ffmpeg_src)/configure
 
 $(path_ffmpeg_build_native_exe) : $(path_ffmpeg_build_native_config) $(path_ffmpeg_src_files)
-	cd $(path_ffmpeg_build_native) && ccache-run make -j12
+	cd $(path_ffmpeg_build_native) && ccache-run make -j`nproc`
 
 ffmpeg : $(path_ffmpeg_build_native_exe)
 
@@ -30,21 +31,21 @@ $(path_ffmpeg_build_win64_config) :
 	cd $(path_ffmpeg_build_win64) && $(path_ffmpeg_src)/configure --arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32- --disable-shared --enable-static
 
 $(path_ffmpeg_build_win64_exe) : $(path_ffmpeg_build_win64_config) $(path_ffmpeg_src_files)
-	ccache-run make -C $(path_ffmpeg_build_win64) -j12
+	ccache-run make -C $(path_ffmpeg_build_win64) -j`nproc`
 
 path_pub_ffmpeg = $(path_pub)/bin/ffmpeg.7z
 $(path_pub_ffmpeg) : $(path_ffmpeg_build_win64_exe)
 	rm -rf $(path_tmp)/out
 	mkdir $(path_tmp)/out
 	cp `ls $(path_ffmpeg_build_win64)/*.exe $(path_ffmpeg_build_win64)/*/*-*.dll | grep -v _g.exe` $(path_tmp)/out/
-	cp /usr/x86_64-w64-mingw32/bin/{SDL2,libwinpthread-1,zlib1,libbz2-1,libiconv-2,liblzma-5}.dll $(path_tmp)/out/
+	-for f in /usr/x86_64-w64-mingw32/bin/{SDL2,libwinpthread-1,zlib1,libbz2-1,libiconv-2,liblzma-5}.dll ; do cp "$$f" $(path_tmp)/out/ ; done || true
 	rm -f $@
 	cd $(path_tmp)/out/ && 7z a $@ *
 ffmpeg-win64 : $(path_pub_ffmpeg)
 
 ### MXE
 
-path_mxe = /tmp/2019-03-10/mxe
+path_mxe = $(path_local)/mxe
 mxe_target = x86_64-w64-mingw32.static
 
 $(path_mxe) :
@@ -52,7 +53,7 @@ $(path_mxe) :
 
 path_mxe_config = $(path_mxe)/settings.mk
 $(path_mxe_config) : | $(path_mxe)
-	echo JOBS := 12 > $@
+	echo JOBS := `nproc` > $@
 	echo MXE_TARGETS := $(mxe_target) >> $@
 
 tgt_mxe_deps = $(path_tmp)/tgt-mxe-deps
