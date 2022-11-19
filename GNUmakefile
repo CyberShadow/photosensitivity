@@ -16,7 +16,7 @@ $(path_ffmpeg_build_native_config) :
 	cd $(path_ffmpeg_build_native) && $(path_ffmpeg_src)/configure
 
 $(path_ffmpeg_build_native_exe) : $(path_ffmpeg_build_native_config) $(path_ffmpeg_src_files)
-	cd $(path_ffmpeg_build_native) && ccache-run make -j`nproc`
+	ccache-run make -C $(path_ffmpeg_build_native) -j`nproc`
 
 ffmpeg : $(path_ffmpeg_build_native_exe)
 
@@ -58,14 +58,14 @@ $(path_mxe_config) : | $(path_mxe)
 
 tgt_mxe_deps = $(path_tmp)/tgt-mxe-deps
 $(tgt_mxe_deps) : $(path_mxe_config)
-	cd $(path_mxe) && make gcc libass jpeg lua luajit rubberband
+	make -C $(path_mxe) gcc libass jpeg lua luajit rubberband
 	touch $@
 
 path_mxe_ffmpeg_exe = $(path_mxe)/usr/$(mxe_target)/bin/ffmpeg.exe
 $(path_mxe_ffmpeg_exe) : $(path_ffmpeg_src_files) $(tgt_mxe_deps)
 	touch $(path_mxe)/src/ffmpeg.mk
 	rm -rf $(path_mxe)/tmp-$(mxe_target)
-	cd $(path_mxe) && make ffmpeg libass jpeg lua luajit rubberband ffmpeg_SOURCE_TREE=$(path_ffmpeg_src)
+	make -C $(path_mxe) ffmpeg libass jpeg lua luajit rubberband ffmpeg_SOURCE_TREE=$(path_ffmpeg_src)
 
 ### MPV
 
