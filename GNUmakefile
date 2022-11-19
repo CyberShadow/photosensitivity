@@ -16,7 +16,7 @@ $(path_ffmpeg_build_native_config) :
 	cd $(path_ffmpeg_build_native) && $(path_ffmpeg_src)/configure
 
 $(path_ffmpeg_build_native_exe) : $(path_ffmpeg_build_native_config) $(path_ffmpeg_src_files)
-	ccache-run make -C $(path_ffmpeg_build_native) -j`nproc`
+	ccache make -C $(path_ffmpeg_build_native) -j`nproc`
 
 ffmpeg : $(path_ffmpeg_build_native_exe)
 
@@ -31,7 +31,7 @@ $(path_ffmpeg_build_win64_config) :
 	cd $(path_ffmpeg_build_win64) && $(path_ffmpeg_src)/configure --arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32- --disable-shared --enable-static
 
 $(path_ffmpeg_build_win64_exe) : $(path_ffmpeg_build_win64_config) $(path_ffmpeg_src_files)
-	ccache-run make -C $(path_ffmpeg_build_win64) -j`nproc`
+	ccache make -C $(path_ffmpeg_build_win64) -j`nproc`
 
 path_pub_ffmpeg = $(path_pub)/bin/ffmpeg.7z
 $(path_pub_ffmpeg) : $(path_ffmpeg_build_win64_exe)
