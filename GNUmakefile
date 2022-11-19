@@ -76,10 +76,10 @@ path_mpv_build_win64_exe = $(path_mpv_build_win64)/mpv.exe
 
 $(path_mpv_build_win64_config) : $(path_mxe_ffmpeg_exe)
 	mkdir -p $(path_mpv_build_win64)
-	cd $(path_mpv) && export PATH=$(path_mxe)/usr/bin:$$PATH && DEST_OS=win32 TARGET=$(mxe_target) python2 ./waf -o $(path_mpv_build_win64) configure
+	cd $(path_mpv) && export PATH=$(path_mxe)/usr/bin:$$PATH && DEST_OS=win32 TARGET=$(mxe_target) python ./waf -o $(path_mpv_build_win64) configure
 
 $(path_mpv_build_win64_exe) : $(path_mpv_build_win64_config)
-	cd $(path_mpv) && export PATH=$(path_mxe)/usr/bin:$$PATH &&                                    python2 ./waf -o $(path_mpv_build_win64) build
+	cd $(path_mpv) && export PATH=$(path_mxe)/usr/bin:$$PATH &&                                    python ./waf -o $(path_mpv_build_win64) build
 
 path_pub_mpv = $(path_pub)/bin/mpv.7z
 $(path_pub_mpv) : $(path_mpv_build_win64_exe)
